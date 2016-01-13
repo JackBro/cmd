@@ -549,6 +549,7 @@ extern int rl_prefer_env_winsize;
 
 /* If non-zero, then this is the address of a function to call just
    before readline_internal () prints the first prompt. */
+//如果设置了，则会在readline_internal之前调用
 extern rl_hook_func_t *rl_startup_hook;
 
 /* If non-zero, this is the address of a function to call just before

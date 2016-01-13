@@ -32,9 +32,10 @@ void                    shutdown_lua();
 extern int              rl_already_prompted;
 static const wchar_t*   g_last_write_buffer = NULL;
 
+
 //------------------------------------------------------------------------------
 static const char* g_header = 
-    "clink v" CLINK_VERSION " : Enhancements for cmd.exe\n"
+    "clink v0.1 : Enhancements for cmd.exe\n"
     "\n"
     "Copyright (c) 2012 Martin Ridgers\n"
     "Copyright (c) 1994-2012 Lua.org, PUC-Rio\n"
@@ -97,6 +98,17 @@ static BOOL WINAPI hooked_read_console(
     }
 
     SetUnhandledExceptionFilter(exception_filter);
+
+    //ReadConsoleW的信息会先进入这里，继而调用call_readline，call_readline初始化rl_startup_hook，并调用readline库的readline，然后
+    //到readline_internal_char << 调用rl_read_key()读取一个键值（比如tab、up、down）<< 调用rl_get_char(&c) /* Get a key from the buffer of characters to be read. Return the key in KEY. Result is KEY if there was a key, or 0 if there wasn't. 如果返回的不是key则调用rl_getc_function(rl_instream)（也即clink的hook：getc_impl()）*/
+    //                                                                                                                                                                 调用_getwch()读取一个键值 （所以主要靠这个函数读取按键信息）
+    // 针对rl_getc_function(rl_instream)里的stream怎样设置： 默认就是stdin和stdout.
+    //
+    //  /* Set up input and output if they are not already set up. */
+    //if (!rl_instream)
+    //    rl_instream = stdin;
+    //if (!rl_outstream)
+    //    rl_outstream = stdout;
 
     rl_already_prompted = 1;
     call_readline(g_last_write_buffer, buffer, charsToRead);

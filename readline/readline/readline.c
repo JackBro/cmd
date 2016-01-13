@@ -191,6 +191,7 @@ int rl_key_sequence_length = 0;
 
 /* If non-zero, then this is the address of a function to call just
    before readline_internal_setup () prints the first prompt. */
+//本地保存的hook的指针，默认为NULL，头文件使用extern暴露此变量给外部接口，外部直接访问此变量，设置其为新的hook指针
 rl_hook_func_t *rl_startup_hook = (rl_hook_func_t *)NULL;
 
 /* If non-zero, this is the address of a function to call just before

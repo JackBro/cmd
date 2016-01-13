@@ -78,7 +78,7 @@ extern int errno;
    character input. */
 rl_hook_func_t *rl_event_hook = (rl_hook_func_t *)NULL;
 
-rl_getc_func_t *rl_getc_function = rl_getc;
+rl_getc_func_t *rl_getc_function = rl_getc; //默认入口
 
 static int _keyboard_input_timeout = 100000;		/* 0.1 seconds; it's in usec */
 
@@ -446,7 +446,7 @@ rl_read_key ()
 	{
 	  if (rl_get_char (&c) == 0)
 	    c = (*rl_getc_function) (rl_instream);
-	  RL_CHECK_SIGNALS ();
+	  RL_CHECK_SIGNALS (); //信号
 	}
     }
 
