@@ -589,7 +589,7 @@ static char *
 readline_internal ()
 {
   int eof;
-
+  //Èë¿Ú
   readline_internal_setup ();
   eof = readline_internal_charloop ();
   return (readline_internal_teardown (eof));
