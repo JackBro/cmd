@@ -52,8 +52,8 @@ typedef struct _keymap_entry {
 #define KEYMAP_SIZE 257
 #define ANYOTHERKEY KEYMAP_SIZE-1
 
-typedef KEYMAP_ENTRY KEYMAP_ENTRY_ARRAY[KEYMAP_SIZE];
-typedef KEYMAP_ENTRY *Keymap;
+typedef KEYMAP_ENTRY KEYMAP_ENTRY_ARRAY[KEYMAP_SIZE];  //typedef char STRING[81], STRING text; 相当于 STRING为char[81]，换言之KEYMAP_ENTRY_ARRAY是struct _keymap_entry[257]
+typedef KEYMAP_ENTRY *Keymap; //typedef char *STRPTR, STRPTR str; 相当于 STRPTR为char *，换言之Keymap为struct _keymap_entry *，也可以作为数组的第一个元素的指针。
 
 /* The values that TYPE can have in a keymap entry. */
 #define ISFUNC 0

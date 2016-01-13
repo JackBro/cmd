@@ -1848,6 +1848,7 @@ rl_set_keymap (map)
     _rl_keymap = map;
 }
 
+//_rl_keymap 是一个全局[char, func]MAP
 Keymap
 rl_get_keymap ()
 {

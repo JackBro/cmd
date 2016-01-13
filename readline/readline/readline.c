@@ -110,7 +110,7 @@ int rl_gnu_readline_p = 1;
 
 /* A pointer to the keymap that is currently in use.
    By default, it is the standard emacs keymap. */
-Keymap _rl_keymap = emacs_standard_keymap;
+Keymap _rl_keymap = emacs_standard_keymap; //Ïàµ±ÓÚ struct _keymap_entry *_rl_keymap
 
 
 /* The current style of editing. */

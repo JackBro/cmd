@@ -109,7 +109,15 @@ static BOOL WINAPI hooked_read_console(
     //    rl_instream = stdin;
     //if (!rl_outstream)
     //    rl_outstream = stdout;
+    
+    /*
+    Keymap 
+    Keymap为struct _keymap_entry *
+    readline将_keymap_entry[257]作为一个数组，存储char为0-257对应的func。
+    _rl_keymap为全局的，当前配置的_keymap_entry[257]数组的指针。
+    于是，从输入得到一个key的char值后，就直接通过_rl_keymap[char]来获得该char对应的func，继而执行。
 
+    */
     rl_already_prompted = 1;
     call_readline(g_last_write_buffer, buffer, charsToRead);
 
