@@ -1,0 +1,5 @@
+premake4.lua需要git支持
+
+所以：
+1，使windows命令行支持git
+2，在当前目录打开git bash，在git bash里执行premake4 vs2008
