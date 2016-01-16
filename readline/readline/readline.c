@@ -110,7 +110,7 @@ int rl_gnu_readline_p = 1;
 
 /* A pointer to the keymap that is currently in use.
    By default, it is the standard emacs keymap. */
-Keymap _rl_keymap = emacs_standard_keymap;
+Keymap _rl_keymap = emacs_standard_keymap; //相当于 struct _keymap_entry *_rl_keymap
 
 
 /* The current style of editing. */
@@ -191,6 +191,7 @@ int rl_key_sequence_length = 0;
 
 /* If non-zero, then this is the address of a function to call just
    before readline_internal_setup () prints the first prompt. */
+//本地保存的hook的指针，默认为NULL，头文件使用extern暴露此变量给外部接口，外部直接访问此变量，设置其为新的hook指针
 rl_hook_func_t *rl_startup_hook = (rl_hook_func_t *)NULL;
 
 /* If non-zero, this is the address of a function to call just before
@@ -588,7 +589,7 @@ static char *
 readline_internal ()
 {
   int eof;
-
+  //入口
   readline_internal_setup ();
   eof = readline_internal_charloop ();
   return (readline_internal_teardown (eof));

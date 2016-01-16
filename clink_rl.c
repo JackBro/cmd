@@ -383,6 +383,7 @@ static int paste_from_clipboard(int count, int invoking_key)
 }
 
 //------------------------------------------------------------------------------
+//入口
 static int startup_hook()
 {
     static int initialised = 0;
@@ -394,7 +395,7 @@ static int startup_hook()
         _rl_term_clreol = "\001";
 
         rl_redisplay_function = display;
-        rl_getc_function = getc_impl;
+        rl_getc_function = getc_impl; //入口
 
         rl_completer_quote_characters = "\"";
         rl_ignore_some_completions_function = postprocess_matches;
