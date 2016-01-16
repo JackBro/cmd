@@ -329,7 +329,7 @@ readline (prompt)
     RL_UNSETSTATE (RL_STATE_CALLBACK);
 #endif
 
-  rl_set_prompt (prompt);
+  rl_set_prompt (prompt); //设置提示语
 
   rl_initialize ();
   if (rl_prep_term_function)
@@ -1027,6 +1027,7 @@ _emx_build_environ ()
 #endif /* __EMX__ */
 #endif
 
+//入口
 /* Initialize the entire state of the world. */
 static void
 readline_initialize_everything ()

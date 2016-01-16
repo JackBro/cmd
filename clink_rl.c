@@ -444,7 +444,7 @@ void CLINK_API call_readline(
     );
 
     rl_startup_hook = startup_hook;
-    text = readline(prompt_utf8);
+    text = readline(prompt_utf8); //提示并读入一行
     if (*text != '\0')
     {
         char* c = text;

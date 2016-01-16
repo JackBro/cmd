@@ -99,7 +99,7 @@ static BOOL WINAPI hooked_read_console(
     SetUnhandledExceptionFilter(exception_filter);
 
     rl_already_prompted = 1;
-    call_readline(g_last_write_buffer, buffer, charsToRead);
+    call_readline(g_last_write_buffer, buffer, charsToRead); // (提示，结果，结果大小)
 
     *charsRead = (unsigned)wcslen(buffer);
     return TRUE;
@@ -183,6 +183,7 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID unused)
         void* the_hook;
     };
 
+	//hook the ReadConsole API with hooked_read_console function
     struct hook_t kernel32_hooks[] =
     {
         {

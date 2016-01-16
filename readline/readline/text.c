@@ -122,7 +122,7 @@ int
 rl_delete_text (from, to)
      int from, to;
 {
-  register char *text;
+  register char *text; //regitster¼Ä´æÆ÷ĞŞÊÎ·ûcan speed up the variable
   register int diff, i;
 
   /* Fix it if the caller is confused. */
