@@ -82,18 +82,18 @@ static int getc_impl(FILE* stream)
 
         WideCharToMultiByte(
             CP_UTF8, 0,
-            wc, -1,
+            wc, -1, //if wc end with '\0' then we can set it to -1 to auto detect the len of the string 
             utf8, sizeof(utf8),
             NULL,
             NULL
         );
 
-        rl_insert_text(utf8);
+        rl_insert_text(utf8);  //insert the text into the readline
         display();
     }
 
     // Set the "meta" key bit if the ALT key is pressed.
-    if (GetAsyncKeyState(VK_MENU) & 0x8000)
+    if (GetAsyncKeyState(VK_MENU) & 0x8000)  //check if "meta" key is pressed, then change it to readline KEY
     {
         i |= 0x80;
     }
