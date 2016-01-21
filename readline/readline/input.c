@@ -445,12 +445,12 @@ rl_read_key ()
       else
 	{
 	  if (rl_get_char (&c) == 0)
-	    c = (*rl_getc_function) (rl_instream);
+	    c = (*rl_getc_function) (rl_instream); //默认的rl_getc_function指向的是rl_getc，可以自定义实现
 	  RL_CHECK_SIGNALS (); //信号
 	}
     }
 
-  return (c);
+  return (c); //当前按键的ASCII码值，rl_getc_function的返回值
 }
 
 int
@@ -466,7 +466,7 @@ rl_getc (stream)
 
 #if defined (__MINGW32__)
       if (isatty (fileno (stream)))
-	return (getch ());
+	return (getch ());	//默认的入口，getch()函数
 #endif
       result = read (fileno (stream), &c, sizeof (unsigned char));
 

@@ -57,8 +57,8 @@
 #define meta_character_bit 0x080	    /* x0000000, must be on. */
 #define largest_char 255		    /* Largest character value. */
 
-#define CTRL_CHAR(c) ((c) < control_character_threshold && (((c) & 0x80) == 0))
-#define META_CHAR(c) ((c) > meta_character_threshold && (c) <= largest_char)
+#define CTRL_CHAR(c) ((c) < control_character_threshold && (((c) & 0x80) == 0)) // 0 - 127
+#define META_CHAR(c) ((c) > meta_character_threshold && (c) <= largest_char)  //127 - 255
 
 #define CTRL(c) ((c) & control_character_mask)
 #define META(c) ((c) | meta_character_bit)

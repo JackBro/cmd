@@ -425,11 +425,11 @@ _rl_qsort_string_compare (s1, s2)
   char **s1, **s2;
 {
 #if defined (HAVE_STRCOLL)
-  return (strcoll (*s1, *s2));
+  return (strcoll (*s1, *s2)); //默认根据ASCII码比较，对于设置了LC_COLLATE语言环境的情况下，则根据LC_COLLATE设置的语言排序方式进行比较。例如：汉字，根据拼音进行比较。
 #else
   int result;
 
-  result = **s1 - **s2;
+  result = **s1 - **s2;	//第一个字符相等才调用比较函数，其实strcmp内部也是这样比较的，如果第一个不等后面也不会比较
   if (result == 0)
     result = strcmp (*s1, *s2);
 

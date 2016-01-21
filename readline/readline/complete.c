@@ -397,14 +397,14 @@ rl_complete (ignore, invoking_key)
 
   if (rl_inhibit_completion)
     return (_rl_insert_char (ignore, invoking_key));
-  else if (rl_last_func == rl_complete && !completion_changed_buffer)
+  else if (rl_last_func == rl_complete && !completion_changed_buffer) //上一次已经操作过补全，并且行没有发生改变，则TAB按键转换为'?'匹配
     return (rl_complete_internal ('?'));
   else if (_rl_complete_show_all)
     return (rl_complete_internal ('!'));
   else if (_rl_complete_show_unmodified)
     return (rl_complete_internal ('@'));
   else
-    return (rl_complete_internal (TAB));
+    return (rl_complete_internal (TAB));		//按键TAB，如果是第一次按TAB，则如果补全有多个选项，会ring()，再次TAB则转化为'?'匹配。
 }
 
 /* List the possible completions.  See description of rl_complete (). */
@@ -1041,6 +1041,7 @@ _rl_find_completion_word (fp, dp)
   return (quote_char);
 }
 
+//text (start, end) complete_func is_found_quote quote_char
 static char **
 gen_completion_matches (text, start, end, our_func, found_quote, quote_char)
      char *text;
@@ -1059,7 +1060,7 @@ gen_completion_matches (text, start, end, our_func, found_quote, quote_char)
   if (rl_attempted_completion_function)
     {
       _rl_interrupt_immediately++;
-      matches = (*rl_attempted_completion_function) (text, start, end);
+      matches = (*rl_attempted_completion_function) (text, start, end); //matches hook
       if (_rl_interrupt_immediately > 0)
 	_rl_interrupt_immediately--;
 
@@ -1094,7 +1095,7 @@ remove_duplicate_matches (matches)
   /* Sort the array without matches[0], since we need it to
      stay in place no matter what. */
   if (i && rl_sort_completion_matches)
-    qsort (matches+1, i-1, sizeof (char *), (QSFUNC *)_rl_qsort_string_compare);
+    qsort (matches+1, i-1, sizeof (char *), (QSFUNC *)_rl_qsort_string_compare); //stdlib.h提供的排序函数
 
   /* Remember the lowest common denominator for it may be unique. */
   lowest_common = savestring (matches[0]);
@@ -1104,7 +1105,7 @@ remove_duplicate_matches (matches)
       if (strcmp (matches[i], matches[i + 1]) == 0)
 	{
 	  xfree (matches[i]);
-	  matches[i] = (char *)&dead_slot;
+	  matches[i] = (char *)&dead_slot; //如果重复，将对应的match指向局部变量dead_slot的地址用来标记失效。
 	}
       else
 	newlen++;
@@ -1113,9 +1114,9 @@ remove_duplicate_matches (matches)
   /* We have marked all the dead slots with (char *)&dead_slot.
      Copy all the non-dead entries into a new array. */
   temp_array = (char **)xmalloc ((3 + newlen) * sizeof (char *));
-  for (i = j = 1; matches[i]; i++)
+  for (i = j = 1; matches[i]; i++)	//match[END]应该是0
     {
-      if (matches[i] != (char *)&dead_slot)
+      if (matches[i] != (char *)&dead_slot)	//如果不是重复的
 	temp_array[j++] = matches[i];
     }
   temp_array[j] = (char *)NULL;
@@ -1299,11 +1300,12 @@ postprocess_matches (matchesp, matching_filenames)
   char *t, **matches, **temp_matches;
   int nmatch, i;
 
-  matches = *matchesp;
+  matches = *matchesp; //matches数组指针，传递指针表示此函数内部可以更改数组
 
-  if (matches == 0)
+  if (matches == 0) //数组为空
     return 0;
 
+  //过滤重复
   /* It seems to me that in all the cases we handle we would like
      to ignore duplicate possiblilities.  Scan for the text to
      insert being identical to the other completions. */
@@ -1314,6 +1316,7 @@ postprocess_matches (matchesp, matching_filenames)
       matches = temp_matches;
     }
 
+  //提供一个接口来过滤部分匹配
   /* If we are matching filenames, then here is our chance to
      do clever processing by re-examining the list.  Call the
      ignore function with the array as a parameter.  It can
@@ -1343,7 +1346,7 @@ postprocess_matches (matchesp, matching_filenames)
 	}
     }
 
-  *matchesp = matches;
+  *matchesp = matches; //修改指针指向新的数组地址（去除了重复
   return (1);
 }
 
@@ -1483,6 +1486,7 @@ rl_display_match_list (matches, len, max)
     }
 }
 
+//Tab-Completion entry
 /* Display MATCHES, a list of matching filenames in argv format.  This
    handles the simple case -- a single match -- first.  If there is more
    than one match, we compute the number of strings in the list and the
@@ -1827,7 +1831,7 @@ rl_complete_internal (what_to_do)
   rl_point = end;
 
   text = rl_copy_text (start, end);
-  matches = gen_completion_matches (text, start, end, our_func, found_quote, quote_char);
+  matches = gen_completion_matches (text, start, end, our_func, found_quote, quote_char); //start to find matches （matches[0]是公共部分，matches[1~]开始才是匹配列表
   /* nontrivial_lcd is set if the common prefix adds something to the word
      being completed. */
   nontrivial_lcd = matches && strcmp (text, matches[0]) != 0;
@@ -1835,9 +1839,9 @@ rl_complete_internal (what_to_do)
   if (what_to_do == '!' || what_to_do == '@')
     tlen = strlen (text);
 #endif
-  xfree (text);
+  xfree (text);	//free the read string and replace with the matches
 
-  if (matches == 0)
+  if (matches == 0) //没有匹配
     {
       rl_ding ();
       FREE (saved_line_buffer);
@@ -1850,9 +1854,10 @@ rl_complete_internal (what_to_do)
   /* If we are matching filenames, the attempted completion function will
      have set rl_filename_completion_desired to a non-zero value.  The basic
      rl_filename_completion_function does this. */
-  i = rl_filename_completion_desired;
+  i = rl_filename_completion_desired;	//是否开启内置的文件名自动补全
 
-  if (postprocess_matches (&matches, i) == 0)
+  //获取了matches后（post）
+  if (postprocess_matches (&matches, i) == 0) //当且仅当matches为空才返回0，其它返回1
     {
       rl_ding ();
       FREE (saved_line_buffer);
@@ -1862,21 +1867,22 @@ rl_complete_internal (what_to_do)
       return (0);
     }
 
+  //根据当前按键处理
   switch (what_to_do)
     {
     case TAB:
     case '!':
     case '@':
-      /* Insert the first match with proper quoting. */
+      /* Insert the first match with proper quoting. 用适当的引号括起第一个匹配并插入 */
 #if 0
       if (*matches[0])
 	insert_match (matches[0], start, matches[1] ? MULT_MATCH : SINGLE_MATCH, &quote_char);
 #else
       if (what_to_do == TAB)
-        {
-          if (*matches[0])
+        {//matches[0]存储了所有matches中开始的公共部分，如果按TAB，且有多个匹配，并且含有公共部分，则自动插入这公共部分。见compute_lcd_of_matches（计算matches的公共部分）
+          if (*matches[0])	//*matches[0]表示第一个字符串的第一个字符的ASCII值
 	    insert_match (matches[0], start, matches[1] ? MULT_MATCH : SINGLE_MATCH, &quote_char);
-        }
+        } 
       else if (*matches[0] && matches[1] == 0)
 	/* should we perform the check only if there are multiple matches? */
 	insert_match (matches[0], start, matches[1] ? MULT_MATCH : SINGLE_MATCH, &quote_char);
@@ -1910,9 +1916,9 @@ rl_complete_internal (what_to_do)
 	      break;
 	    }
 	  else if (rl_editing_mode != vi_mode)
-	    rl_ding ();	/* There are other matches remaining. */
+	    rl_ding ();	/* There are other matches remaining. */     //如果第一次按TAB，且有多个匹配，则ding()
 	}
-      else
+      else	//最后一个match
 	append_to_match (matches[0], delimiter, quote_char, nontrivial_lcd);
 
       break;
@@ -1936,9 +1942,11 @@ rl_complete_internal (what_to_do)
 
   _rl_free_match_list (matches);
 
-  /* Check to see if the line has changed through all of this manipulation. */
+  /* Check to see if the line has changed through all of this manipulation（篡改）. */
+  //saved_line_buffer 是TAB时的rl_line_buffer，保存了的当前行的内容
   if (saved_line_buffer)
     {
+		//completion过程buffer是否改变了
       completion_changed_buffer = strcmp (rl_line_buffer, saved_line_buffer) != 0;
       xfree (saved_line_buffer);
     }
@@ -1986,23 +1994,23 @@ rl_completion_matches (text, entry_function)
   matches = 0;
   match_list_size = 10;
   match_list = (char **)xmalloc ((match_list_size + 1) * sizeof (char *));
-  match_list[1] = (char *)NULL;
+  match_list[1] = (char *)NULL; 
 
   _rl_interrupt_immediately++;
-  while (string = (*entry_function) (text, matches))
+  while (string = (*entry_function) (text, matches)) //匹配例程，用于生成一个match
     {
       if (matches + 1 == match_list_size)
 	match_list = (char **)xrealloc
 	  (match_list, ((match_list_size += 10) + 1) * sizeof (char *));
 
-      match_list[++matches] = string;
+      match_list[++matches] = string; //++matches可见matches[0]没有使用，从matches[1]开始插入生成的匹配。
       match_list[matches + 1] = (char *)NULL;
     }
   if (_rl_interrupt_immediately > 0)
     _rl_interrupt_immediately--;
 
-  /* If there were any matches, then look through them finding out the
-     lowest common denominator.  That then becomes match_list[0]. */
+  /* If there were any matches, then look through them finding out the（所有匹配公共部分，比如read, really的公共部分是re）
+     lowest common denominator.  That then becomes match_list[0]. 上面保留的match_list[0]此时用上了，把公共部分放到match_list[0]里面，如果不为空，且第一次按TAB，则自动补全到行*/
   if (matches)
     compute_lcd_of_matches (match_list, matches, text);
   else				/* There were no matches. */

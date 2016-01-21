@@ -740,7 +740,7 @@ extern rl_linebuf_func_t *rl_char_is_quoted_p;
 
 /* Non-zero means to suppress normal filename completion after the
    user-specified completion function has been called. */
-extern int rl_attempted_completion_over;
+extern int rl_attempted_completion_over; //如果非0，表示禁用默认的文件名自动补全，否则即使我们设置了补全函数，补全函数结束后就会进行文件名自动补全
 
 /* Set to a character describing the type of completion being attempted by
    rl_complete_internal; available for use by application completion

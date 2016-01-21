@@ -515,7 +515,7 @@ readline_internal_charloop ()
 	}
 
       RL_SETSTATE(RL_STATE_READCMD);
-      c = rl_read_key ();
+      c = rl_read_key (); //rl_getc_function返回的char，可以不用管细节，rl_read_key()就是获取key
       RL_UNSETSTATE(RL_STATE_READCMD);
 
       /* look at input.c:rl_getc() for the circumstances under which this will
@@ -549,8 +549,9 @@ readline_internal_charloop ()
 #endif
 	}
 
+	  //rl_read_key读取了字符，根据字符调用对应的func
       lastc = c;
-      _rl_dispatch ((unsigned char)c, _rl_keymap);
+      _rl_dispatch ((unsigned char)c, _rl_keymap);	//_rl_keymap是char与func对应的MAP
       RL_CHECK_SIGNALS ();
 
       /* If there was no change in _rl_last_command_was_kill, then no kill
@@ -577,7 +578,7 @@ readline_internal_charloop ()
   int eof = 1;
 
   while (rl_done == 0)
-    eof = readline_internal_char ();
+    eof = readline_internal_char ();	//读取字符入口
   return (eof);
 }
 #endif /* READLINE_CALLBACKS */
@@ -738,6 +739,7 @@ _rl_dispatch_subseq (key, map, got_subseq)
   _rl_keyseq_cxt *cxt;
 #endif
 
+  //META_CHAR是127 - 255
   if (META_CHAR (key) && _rl_convert_meta_chars_to_ascii)
     {
       if (map[ESC].type == ISKMAP)
@@ -754,9 +756,11 @@ _rl_dispatch_subseq (key, map, got_subseq)
       return 0;
     }
 
+  //是否是STATE
   if (RL_ISSTATE (RL_STATE_MACRODEF))
     _rl_add_macro_char (key);
 
+  //其余键值
   r = 0;
   switch (map[key].type)
     {
@@ -764,12 +768,14 @@ _rl_dispatch_subseq (key, map, got_subseq)
       func = map[key].function;
       if (func)
 	{
+		//如果是do_lowercase function则直接执行，这是hardcode一个function
 	  /* Special case rl_do_lowercase_version (). */
 	  if (func == rl_do_lowercase_version)
 	    return (_rl_dispatch (_rl_to_lower (key), map));
 
 	  rl_executing_keymap = map;
 
+	  //按键处理，比如TAB按键对应的map[key].function
 	  rl_dispatching = 1;
 	  RL_SETSTATE(RL_STATE_DISPATCHING);
 	  (*map[key].function)(rl_numeric_arg * rl_arg_sign, key);

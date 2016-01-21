@@ -890,6 +890,7 @@ int
 rl_insert (count, c)
      int count, c;
 {
+	//如果是insert mode，则插入，否则覆盖
   return (rl_insert_mode == RL_IM_INSERT ? _rl_insert_char (count, c)
   					 : _rl_overwrite_char (count, c));
 }

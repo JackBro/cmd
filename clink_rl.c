@@ -401,8 +401,8 @@ static int startup_hook()
         rl_ignore_some_completions_function = postprocess_matches;
         rl_basic_word_break_characters = " <>|";
         rl_completer_word_break_characters = " <>|";
-        rl_completion_display_matches_hook = display_matches;
-        rl_attempted_completion_function = alternative_matches;
+        rl_completion_display_matches_hook = display_matches;	//print matches
+        rl_attempted_completion_function = alternative_matches; //the complete function ! Éú³Ématches£¡
 
         rl_add_funmap_entry("clink-completion-shim", completion_shim);
         rl_add_funmap_entry("clear-line", clear_line);

@@ -43,6 +43,7 @@ size_t                      hooked_mbrlen(const char*, size_t, mbstate_t*);
 int                         hooked_stat(const char*, struct hooked_stat*);
 int                         hooked_fstat(int, struct hooked_stat*);
 
+//rewrite these functions in project, while do putc actually do hooked_putc 
 #define wcwidth(x)          (1)
 #define fwrite              hooked_fwrite
 #define fprintf             hooked_fprintf
