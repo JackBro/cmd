@@ -1,2 +1,12 @@
 tags
 *.swp
+enc_temp_folder
+obj
+bin
+Debug
+/.build/readlineEpl/Debug/readlineEpl.exe.embed.manifest.res
+/.build/readlineEpl/Debug/readlineEpl.exe.intermediate.manifest
+/.build/readlineEpl/Debug/readlineEpl.obj
+/.build/readlineEpl/Debug/stdafx.obj
+/.build/readlineEpl/Debug/vc90.idb
+/.build/readlineEpl/Debug/vc90.pdb
